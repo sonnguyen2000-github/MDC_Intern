@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css">
+    <style>
+        button {
+            background-color: beige;
+            border-radius: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 23px;
+        }
+
+        h1 {
+            color: rgb(79, 173, 79);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 30px;
+        }
+
+        p {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 23px;
+        }
+
+        input {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 23px;
+        }
+
+        body {
+            background-color: beige !important;
+        }
+
+        label {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 23px;
+        }
+
+        output {
+            padding: 5px;
+            margin-bottom: 5px;
+            border-radius: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 23px;
+        }
+
+        .myclass {
+            margin: 15px;
+            display: inline-block;
+        }
+
+        #submit {
+            border-radius: 15px;
+        }
+
+        h1[class='myclass'] {
+            font-size: 31px;
+            margin: 15px !important;
+            display: block;
+        }
+
+        button[id='switchBtn'] {
+            color: rgb(255, 0, 50);
+            font-size: 30px;
+        }
+    </style>
+    <h1 class="myclass">TREE FAMILY</h1>
+</head>
+
+<body style="background-color: white;">
+    <input class="myclass" type="file" name="inputfile" id="inputfile">
+    <br>
+    <pre id="output" style="margin: 15px; font-size: 20px"></pre>
+    <form style="margin: 15px;">
+        <p style="font-style: italic;"><b>Choose question</b></p>
+        <input type="radio" id="c2" value="2" name="option" checked="true" onclick="switch2()">
+        <label for="c2">2. Check if X is father(grandfather ...) of Y</label>
+        <br>
+        <input type="radio" id="c3" value="3" name="option" onclick="switch3()">
+        <label for="c3">3. Trace family of X</label>
+        <br>
+        <button id="switchBtn" onclick="switchHtml()"><b>SWICH</button>
+    </form>
+
+    <div id="input">
+        <div id="input2" style="margin: 15px;">
+            <input type="text" id="node-x" placeholder="Node X code"
+                onkeyup="if(event.keyCode == 13){submit2(this.value, document.getElementById('node-y').value);}">
+            <input type="text" id="node-y" placeholder="Node Y code"
+                onkeyup="if(event.keyCode == 13){submit2(document.getElementById('node-x').value, this.value)}">
+            <input type="submit" id="submit" name="submit" value="Submit"
+                onclick="submit2(document.getElementById('node-x').value, document.getElementById('node-y').value)">
+        </div>
+
+        <div id="input3" style="display: none; margin: 15px;">
+            <input type="text" id="node" placeholder="Node X code"
+                onkeyup="if(event.keyCode == 13){submit3(this.value)}">
+            <input type="submit" id="submit" name="submit" value="Submit"
+                onclick="submit3(document.getElementById('node').value)">
+        </div>
+    </div>
+
+    <pre id="result" type="text" style="margin: 15px; font-size: 20px"></pre>
+
+</body>
+<script type="text/javascript">
+    //const axios = require('axios').default;
+
+    document.getElementById('inputfile')
+        .addEventListener('change', function () {
+
+            let fr = new FileReader();
+
+            fr.onload = function () {
+                nodes = new Map();
+
+                console.log(this.result);
+                let lines = this.result.split("\n");
+                document.getElementById('output')
+                    .textContent = lines;
+                for (line of lines) {
+                    let node = new Node();
+                    let data = line.split(" ", 4);
+                    node.nid = data[0];
+                    node.nfather = data[1];
+                    node.nname = data[2] + " " + (data[3] ? data[3] : "");
+                    localStorage.setItem(node.nid, node.nid + ";" + node.nfather + ";" + node.nname);
+                    nodes.set(node.nid, node);
+                }
+                let output = "";
+                for (node of nodes.values()) {
+                    output += (node + "\n");
+                }
+                document.getElementById('output')
+                    .textContent = output;
+
+                alert("File read successfully.");
+            }
+
+            try {
+                fr.readAsText(this.files[0]);
+            }
+            catch (e) {
+                alert("Error");
+            }
+        });
+
+    function switch2() {
+        document.getElementById("input2").style.display = "block";
+        document.getElementById("input3").style.display = "none";
+    }
+
+    function switch3() {
+        document.getElementById("input3").style.display = "block";
+        document.getElementById("input2").style.display = "none";
+    }
+
+    function submit2(x, y) {
+        console.log(x + '-' + y);
+        try {
+            let check = Node.xFy(x, y);
+            if (check) {
+                document.getElementById("result").textContent = "X is father(grandfather ...) of Y.\nTrace:\n";
+                Node.trace(x, y);
+            } else {
+                document.getElementById("result").textContent = "X is not father(grandfather ...) of Y.";
+            }
+        } catch (e) {
+            alert("Error");
+            console.log(e.message);
+        }
+    }
+
+    function submit3(x) {
+        console.log(x);
+        try {
+            document.getElementById("result").textContent = "Family of " + nodes.get(x).nname + ":\n";
+            Node.printFamily(x);
+        } catch (e) {
+            console.log(e.message);
+        }
+    }
+
+    function switchHtml(){
+        // let request = new HttpRequest();
+        // request.open('GET','/html?option=2', false);
+        // request.send();
+        axios.request({
+            url: '/html?option2',
+            baseUrl: 'http://localhost:4848',
+            method: 'post',
+        })
+    }
+
+    class Node {
+        constructor() {
+
+        }
+
+        static toNode(text) {
+            console.log(text);
+            if (!text)
+                return "";
+            let data = text.split(";");
+            let node = new Node();
+            node.nid = data[0];
+            node.nfather = data[1];
+            node.nname = data[2];
+            return node;
+        }
+
+        static xFy(x, y) {
+            if (y == 0)
+                return false;
+            let node = nodes.get(y);
+            if (node.nfather == x)
+                return true;
+            else
+                return Node.xFy(x, node.nfather);
+
+        }
+
+        static trace(x, y) {
+            if (x != y) {
+                Node.trace(x, nodes.get(y).nfather);
+            }
+            document.getElementById("result").textContent += nodes.get(y) + "\n";
+            console.log(nodes.get(y));
+
+        }
+
+        static printFamily(x) {
+            for (let node of nodes.values()) {
+                if (node.father == x) {
+                    document.getElementById("result").textContent += node + "\n";
+                    console.log(node);
+                    Node.printFamily(node.id);
+                }
+            }
+        }
+
+        toString() {
+            return this.id + '\t' + this.father + '\t' + this.name;
+        }
+
+        get nid() {
+            return this.id;
+        }
+
+        set nid(id) {
+            this.id = id;
+        }
+
+        get nfather() {
+            return this.father;
+        }
+
+        set nfather(father) {
+            this.father = father;
+        }
+
+        get nname() {
+            return this.name;
+        }
+
+        set nname(name) {
+            this.name = name;
+        }
+
+    }</script>
+
+</html>

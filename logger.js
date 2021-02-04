@@ -1,7 +1,15 @@
-var url = "";
+const EventEmitter = require('events');
 
-function log(message) {
-    console.log(message);
+class Logger extends EventEmitter {
+    constructor() {
+        super();
+    }
+
+    log(message) {
+        console.log(message);
+        this.emit('messageLogged', { id: '100', msg: 'Logging...' });
+    }
 }
 
-module.exports.loggerLog = log;
+
+module.exports.Logger = Logger;

@@ -1,0 +1,12 @@
+1 0 Root
+2 1 Node A
+3 1 Node B
+4 2 Node C
+5 2 Node D
+6 3 Node E
+7 3 Node F
+8 4 Node G
+9 4 Node H
+10 7 Node I
+11 12 Node J
+12 0 Node K

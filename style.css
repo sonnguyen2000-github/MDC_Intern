@@ -1,0 +1,54 @@
+button {
+    background-color: beige;
+    border-radius: 15px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 23px;
+}
+
+h1 {
+    color: rgb(79, 173, 79);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 30px;
+}
+
+p {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 23px;
+}
+
+input {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 23px;
+}
+
+body {
+    background-color: beige !important; 
+}
+
+label {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 23px;
+}
+
+output {
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 15px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 23px;
+}
+
+.myclass {
+    margin: 15px;
+    display: inline-block;
+}
+
+#submit {
+    border-radius: 15px;
+}
+
+h1[class='myclass'] {
+    font-size: 31px;
+    margin: 15px !important;
+    display: block;
+}
